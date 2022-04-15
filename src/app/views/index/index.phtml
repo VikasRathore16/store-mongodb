@@ -1,0 +1,45 @@
+<?php
+header("Cache-Control: no cache");
+session_cache_limiter("private_no_expire");
+if (!isset($_REQUEST['locale'])) {
+    $_REQUEST['locale'] = 'en';
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!---------------- Including Header ------------>
+    <?php echo $this->partial('index/header') ?>
+
+    <main>
+        <div class="row products">
+            <!---------------- Listing all Products ------------>
+            <?php foreach ($products as $product) { ?>
+                <div class="col-3 p-3   h4 mx-5 border mt-5">
+                    <div class="img bg-dark" style="height:200px"></div>
+                    <div class="card-body">
+                        <p class="card-title"> <?php echo $t->_("Name") . " : " . $t->_("$product->product_name") ?></p>
+                        <p class="card-text"> <?php echo  $t->_("Description") . " : " . $t->_("$product->description") ?></p>
+                        <p class="card-text"> <?php echo  $t->_("Price") . " : " . $t->_("$ $product->price") ?></p>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    </main>
+
+    <!---------------- Including Footer ------------>
+    <?php echo $this->partial('index/footer') ?>
+
+</body>
+
+</html>
