@@ -16,29 +16,102 @@ class OrderController extends Controller
     public function orderListAction()
     {
         if ($this->request->has('status')) {
-            $Order = new Orders($this->mongo, 'store', 'orders');
-            $order = $Order->updateOne(
-                ['_id' => new ObjectID((string) $this->request->getPost('id'))],
-                [
-                    '$set' => [
-                        'Status' => $this->request->getPost('status'),
-                    ]
-                ]
-            );
-            printf("Matched %d document(s)\n", $order->getMatchedCount());
-            printf("Modified %d document(s)\n", $order->getModifiedCount());
-            // die();
+            $this->statusUpdate($this->request->getPost('id'));
+            $this->response->redirect('order/orderList');
+        } elseif ($this->request->has('dropdown') && $this->request->get('date') == 'date') {
+            $this->view->orders =  $this->dropdownSearch($this->request->get());
+        } elseif ($this->request->get('date') && count($this->request->get()) == 3) {
+            print_r($this->request->get());
+            $this->view->orders = $this->dateSearch($this->request->get());
+
+            // die(date('Y-m-d'));
+        } elseif ($this->request->has('dropdown') && $this->request->get('date') != 'date' && count($this->request->get()) > 3) {
+            $this->view->orders = $this->dropdownDateSearch($this->request->get());
+        } else {
+            // die('her');
+            $orders = new Orders($this->mongo, 'store', 'orders');
+            $this->view->orders = $orders->find();
         }
-
-        
-
-        // $this->view->t = $this->cache->get($this->request->get('locale'));
         $this->view->t = $this->cache->get('en');
 
-        $orders = new Orders($this->mongo, 'store', 'orders');
-        $this->view->orders = $orders->find();
+        // $this->view->t = $this->cache->get($this->request->get('locale'));
     }
 
+    public function statusUpdate($arr)
+    {
+        $Order = new Orders($this->mongo, 'store', 'orders');
+        $order = $Order->updateOne(
+            ['_id' => new ObjectID((string) $this->request->getPost('id'))],
+            [
+                '$set' => [
+                    'Status' => $this->request->getPost('status'),
+                    'Status_change_date' =>  date('Y-m-d')
+                ]
+            ]
+        );
+    }
+
+    public function dropdownSearch($arr)
+    {
+        $arr =  array_slice($this->request->get(), 2);
+        $match = array();
+        foreach ($arr as $key => $value) {
+            if ($value == 'date') {
+                continue;
+            }
+            array_push($match, array('Status' => $value));
+        }
+        print_r($match);
+        // die;
+        $orders = new Orders($this->mongo, 'store', 'orders');
+        return $orders->find(array('$or' => $match));
+    }
+
+    public function dateSearch($arr)
+    {
+        $arr =  array_slice($this->request->get(), 2);
+        $match = array();
+        if ($arr['date'] == 'today') {
+            array_push($match, array('created_date' =>  date('Y-m-d')));
+        }
+        if ($arr['date'] == 'this_week') {
+            array_push($match, array('created_date' =>  date('Y-m-d')));
+        }
+        if ($arr['date'] == 'this_month') {
+            array_push($match, array('created_date' =>  date('Y-m-d')));
+        }
+        $orders = new Orders($this->mongo, 'store', 'orders');
+        return $orders->find(array('$or' => $match));
+    }
+
+    public function dropdownDateSearch($arr)
+    {
+        $arr =  array_slice($this->request->get(), 2);
+        $match = array();
+        if ($this->request->get('date') == 'today') {
+            foreach ($arr as $key => $value) {
+                array_push($match, array('Status' => $value, 'created_date' => '2022-04-16'));
+            }
+
+            $orders = new Orders($this->mongo, 'store', 'orders');
+            return $orders->find(array('$or' => $match));
+        }
+        if ($this->request->get('date') == 'this_week') {
+            foreach ($arr as $key => $value) {
+                array_push($match, array('Status' => $value, 'created_date' => '2022-04-16'));
+            }
+
+            $orders = new Orders($this->mongo, 'store', 'orders');
+            return $orders->find(array('$or' => $match));
+        }
+        if ($this->request->get('date') == 'this_month') {
+            foreach ($arr as $key => $value) {
+                array_push($match, array('Status' => $value, 'created_date' => '2022-04-16'));
+            }
+            $orders = new Orders($this->mongo, 'store', 'orders');
+            return $orders->find(array('$or' => $match));
+        }
+    }
     /**
      * addOrder function
      * add new order
@@ -61,14 +134,12 @@ class OrderController extends Controller
 
 
         if ($this->request->has('customer_name')) {
-            echo "asdf";
-            // die();
             $newOrder = new Orders($this->mongo, 'store', 'orders');
             $myescaper = new App\Components\Myescaper();
             $myescaper = $myescaper->santize($this->request->getPost());
             $this->view->post = $this->request->getPost();
             $this->view->order = $myescaper;
-            $myescaper['created_date'] = Date('Y-m-d');
+            $myescaper['created_date'] = date('Y-m-d');
             $newOrder->insertOne(
                 $myescaper,
                 // [

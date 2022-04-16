@@ -6410,3 +6410,6 @@
 [2022-04-15T12:45:20+00:00][error] SELECT IF(COUNT(*) > 0, 1, 0) FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_NAME` = 'components' AND `TABLE_SCHEMA` = DATABASE()
 [2022-04-15T12:45:20+00:00][error] DESCRIBE `components`
 [2022-04-15T12:45:20+00:00][error] SELECT `components`.`id`, `components`.`component` FROM `components`
+[2022-04-16T04:01:47+00:00][error] SELECT IF(COUNT(*) > 0, 1, 0) FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_NAME` = 'users' AND `TABLE_SCHEMA` = DATABASE()
+[2022-04-16T04:01:47+00:00][error] DESCRIBE `users`
+[2022-04-16T04:01:47+00:00][error] SELECT `users`.`user_id`, `users`.`jwt` FROM `users`

@@ -1,45 +1,65 @@
 <?php
 $status = [
+    'Status' => 'Status',
     'Paid' => 'Paid',
     'Processing' => 'Processing',
     'Dispatched' => 'Dispatched',
     'Shipped' => 'Shipped',
     'Refunded' => 'Refunded'
 ];
-
 if (1) {
 ?>
-    <form action="" onblur="this.form.submit()">
+    <form action="" class="form container">
+        <input type="hidden" name='dropdown' value="checkbox" />
         <div class="multiselect">
             <div class="selectBox" onclick="showCheckboxes()">
                 <select>
-                    <option>Select an option</option>
+                    <option>Filter</option>
                 </select>
                 <div class="overSelect"></div>
             </div>
             <div id="checkboxes">
-                <?php foreach ($status as $key=>$value){?>
-                <label for="one">
-                    <input type="checkbox" id="<?php echo $key ?>" value="<?php echo $value ?>" name='<?php echo $value ?>' /><?php echo $value ?>
-                </label>
+                <?php
+                $checkboxes =  array_slice($status, 1);
+                foreach ($checkboxes as $key => $value) { ?>
+                    <label for="one">
+                        <input type="checkbox" id="<?php echo $key ?>" value="<?php echo $value ?>" name='<?php echo $value ?>' /><?php echo $value ?>
+                    </label>
                 <?php } ?>
             </div>
         </div>
+        <select name='date'>
+            <option value="date" class="date">Select Date</option>
+            <option value="today" class="today">Today</option>
+            <option value="this_week" class="This Week">This Week</option>
+            <option value="this_month" class="This Month">This Month</option>
+            <option value="this_month" class="This Month">Customer</option>
+        </select>
         <button type="submit">Filter</button>
     </form>
+
+    <!-- <form>
+        <select name='date' onchange="this.form.submit()">
+            <option onchange="this.form.submit()" value="date" class="date">Select Date</option>
+            <option onchange="this.form.submit()" value="today" class="today">Today</option>
+            <option onchange="this.form.submit()" value="this_week" class="This Week">This Week</option>
+            <option onchange="this.form.submit()" value="this_month" class="This Month">This Month</option>
+            <option onchange="this.form.submit()" value="this_month" class="This Month">Customer</option>
+        </select>
+    </form> -->
 
     <h2 class='container text-center mt-4'><?php echo $t->_("All Orders"); ?></h2>
 
     <!------------------------------------------------------------- Orders Table ---------------------------------------------------->
 
-    <table class="table table-bordered table-hover container mt-5">
+    <table class="table table-bordered table-hover small container mt-5">
         <thead class="thead-light">
             <tr>
                 <th><?php echo $t->_("Id"); ?></th>
                 <th><?php echo $t->_("Customer Name"); ?></th>
                 <th><?php echo $t->_("Customer Address"); ?></th>
                 <th><?php echo $t->_("Zipcode"); ?></th>
-                <th><?php echo $t->_("Products"); ?></th>
+                <th><?php echo $t->_("Products Id"); ?></th>
                 <th><?php echo $t->_("Quantity"); ?></th>
                 <th><?php echo $t->_("Status"); ?></th>
                 <th><?php echo $t->_("Operations"); ?></th>
@@ -62,7 +82,9 @@ if (1) {
                     <td><?php echo $order->quantity; ?></td>
                     <td>
                         <?php
-
+                        if (isset($order->Status)) {
+                            echo $order->Status;
+                        }
 
 
                         // dropdown
