@@ -33,21 +33,17 @@ if (1) {
             <option value="today" class="today">Today</option>
             <option value="this_week" class="This Week">This Week</option>
             <option value="this_month" class="This Month">This Month</option>
-            <option value="this_month" class="This Month">Customer</option>
+            <option id='custom' onchange="custom()" value="custom" class="Custom">Custom Date</option>
+
         </select>
+        <div id="custom_date">
+            <label for="from"> From</label>
+            <input type="text" name='from' placeholder='<?php echo date('Y-m-d') ?>'>
+            <label for="to"> To</label>
+            <input type="text" name='to' placeholder="<?php echo date('Y-m-d') ?>">
+        </div>
         <button type="submit">Filter</button>
     </form>
-
-    <!-- <form>
-        <select name='date' onchange="this.form.submit()">
-            <option onchange="this.form.submit()" value="date" class="date">Select Date</option>
-            <option onchange="this.form.submit()" value="today" class="today">Today</option>
-            <option onchange="this.form.submit()" value="this_week" class="This Week">This Week</option>
-            <option onchange="this.form.submit()" value="this_month" class="This Month">This Month</option>
-            <option onchange="this.form.submit()" value="this_month" class="This Month">Customer</option>
-        </select>
-    </form> -->
-
     <h2 class='container text-center mt-4'><?php echo $t->_("All Orders"); ?></h2>
 
     <!------------------------------------------------------------- Orders Table ---------------------------------------------------->
@@ -55,11 +51,13 @@ if (1) {
     <table class="table table-bordered table-hover small container mt-5">
         <thead class="thead-light">
             <tr>
-                <th><?php echo $t->_("Id"); ?></th>
+                <th><?php echo $t->_("Order Id"); ?></th>
+                <th><?php echo $t->_("Products Id"); ?></th>
+                <th><?php echo $t->_("Order Date"); ?></th>
                 <th><?php echo $t->_("Customer Name"); ?></th>
                 <th><?php echo $t->_("Customer Address"); ?></th>
                 <th><?php echo $t->_("Zipcode"); ?></th>
-                <th><?php echo $t->_("Products Id"); ?></th>
+
                 <th><?php echo $t->_("Quantity"); ?></th>
                 <th><?php echo $t->_("Status"); ?></th>
                 <th><?php echo $t->_("Operations"); ?></th>
@@ -75,10 +73,12 @@ if (1) {
             <?php foreach ($orders as $order) { ?>
                 <tr>
                     <td><?php echo $order->_id; ?></td>
+                    <td><?php echo $order->product; ?></td>
+                    <td><?php echo $order->created_date; ?></td>
                     <td><?php echo $order->customer_name; ?></td>
                     <td><?php echo $order->customer_address; ?></td>
                     <td><?php echo $order->zipcode; ?></td>
-                    <td><?php echo $order->product; ?></td>
+
                     <td><?php echo $order->quantity; ?></td>
                     <td>
                         <?php
@@ -159,4 +159,31 @@ if (1) {
             expanded = false;
         }
     }
+
+    $(document).ready(function() {
+        $("#custom_date").hide();
+    })
+
+    $("select").on("change", function(e) {
+        e.preventDefault();
+        dropdown_value = $(this).val();
+        if (dropdown_value == 'custom') {
+            console.log($(this).val());
+            $("#custom_date").show();
+        }
+
+        //   console.log($(this).data("id"));
+        //   $.ajax({
+        //       method: "GET",
+        //       url: "",
+        //       data: {
+        //           id: $(this).data("id"),
+        //           action: "view"
+        //       }
+
+        //   }).done(function(data) {
+        //       console.log(data);
+        //       display(data);
+        //   });
+    });
 </script>

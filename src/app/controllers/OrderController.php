@@ -20,7 +20,7 @@ class OrderController extends Controller
             $this->response->redirect('order/orderList');
         } elseif ($this->request->has('dropdown') && $this->request->get('date') == 'date') {
             $this->view->orders =  $this->dropdownSearch($this->request->get());
-        } elseif ($this->request->get('date') && count($this->request->get()) == 3) {
+        } elseif (($this->request->get('date') && count($this->request->get()) == 3) || $this->request->has('to')) {
             print_r($this->request->get());
             $this->view->orders = $this->dateSearch($this->request->get());
 
@@ -69,19 +69,42 @@ class OrderController extends Controller
 
     public function dateSearch($arr)
     {
+        $orders = new Orders($this->mongo, 'store', 'orders');
         $arr =  array_slice($this->request->get(), 2);
         $match = array();
         if ($arr['date'] == 'today') {
             array_push($match, array('created_date' =>  date('Y-m-d')));
+            return $orders->find(array('$or' => $match));
         }
         if ($arr['date'] == 'this_week') {
-            array_push($match, array('created_date' =>  date('Y-m-d')));
+            return $orders->find(array(
+                'created_date' => array(
+                    '$lte' => date('Y-m-d'),
+                    '$gte' => date("Y-m-d", strtotime("-1 week"))
+                )
+            ));
         }
         if ($arr['date'] == 'this_month') {
-            array_push($match, array('created_date' =>  date('Y-m-d')));
+            $monthFromToday = date("Y-m-d", strtotime("-1 month", strtotime(date("Y/m/d"))));
+            return $orders->find(array(
+                'created_date' => array(
+                    '$lte' => date('Y-m-d'),
+                    '$gte' => $monthFromToday
+                )
+            ));
         }
-        $orders = new Orders($this->mongo, 'store', 'orders');
-        return $orders->find(array('$or' => $match));
+        if ($arr['date'] == 'custom') {
+            $monthFromToday = date("Y-m-d", strtotime("-1 month", strtotime(date("Y/m/d"))));
+            $from = $this->request->get('from');
+            $to = $this->request->get('to');
+            // die($to);
+            return $orders->find(array(
+                'created_date' => array(
+                    '$lte' => $to,
+                    '$gte' => $from
+                )
+            ));
+        }
     }
 
     public function dropdownDateSearch($arr)
@@ -98,15 +121,33 @@ class OrderController extends Controller
         }
         if ($this->request->get('date') == 'this_week') {
             foreach ($arr as $key => $value) {
-                array_push($match, array('Status' => $value, 'created_date' => '2022-04-16'));
+                array_push($match, array('Status' => $value,  'created_date' => array(
+                    '$lte' => date('Y-m-d'),
+                    '$gte' => date("Y-m-d", strtotime("-1 week"))
+                )));
             }
 
             $orders = new Orders($this->mongo, 'store', 'orders');
             return $orders->find(array('$or' => $match));
         }
         if ($this->request->get('date') == 'this_month') {
+            $monthFromToday = date("Y-m-d", strtotime("-1 month", strtotime(date("Y/m/d"))));
             foreach ($arr as $key => $value) {
-                array_push($match, array('Status' => $value, 'created_date' => '2022-04-16'));
+                array_push($match, array('Status' => $value, 'created_date' => array(
+                    '$lte' => date('Y-m-d'),
+                    '$gte' => $monthFromToday
+                )));
+            }
+            $orders = new Orders($this->mongo, 'store', 'orders');
+            return $orders->find(array('$or' => $match));
+        }
+
+        if ($this->request->get('date') == 'custom') {
+            foreach ($arr as $key => $value) {
+                array_push($match, array('Status' => $value, 'created_date' => array(
+                    '$lte' => $this->request->get('to'),
+                    '$gte' => $this->request->get('from')
+                )));
             }
             $orders = new Orders($this->mongo, 'store', 'orders');
             return $orders->find(array('$or' => $match));
