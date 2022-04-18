@@ -6,7 +6,11 @@
 
 if (1) {
 ?>
-
+  <form method="get">
+    <input name='query' \>
+    <button type="submit" name='submit' value="Submit">Search</button>
+    <button type="submit" name='submit' value="all">All</button>
+  </form>
   <h2 class='container text-center mt-4'><?php echo $t->_("All Products"); ?></h2>
 
   <?php if (isset($msg)) {
@@ -103,20 +107,5 @@ if (1) {
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
 <script>
-  // $("body").on("click", ".quick_view", function(e) {
-  //     e.preventDefault();
-  //     console.log($(this).data("id"));
-  //     $.ajax({
-  //         method: "GET",
-  //         url: "",
-  //         data: {
-  //             id: $(this).data("id"),
-  //             action: "view"
-  //         }
 
-  //     }).done(function(data) {
-  //         console.log(data);
-  //         display(data);
-  //     });
-  // });
 </script>

@@ -34,7 +34,7 @@
         <?php echo $this->tag->textField(['zipcode', 'class' => 'form-control col-6']) ?>
     </p>
 
-    
+
 
 
     <p class="row">
@@ -91,13 +91,13 @@
     //  display action dropdown
     function display(data) {
 
-        Object.keys(data.variation).forEach(key => {
-            // console.log(key, data.variation[key]);
-            obj = data.variation[key]
-            Object.keys(obj).forEach(k => {
-                console.log(k, obj[k]);
-            });
-        });
+        // Object.keys(data.variation).forEach(key => {
+        //     // console.log(key, data.variation[key]);
+        //     obj = data.variation[key]
+        //     Object.keys(obj).forEach(k => {
+        //         console.log(k, obj[k]);
+        //     });
+        // });
 
 
         html = " <p class='row '>\
@@ -108,13 +108,15 @@
         Object.keys(data.variation).forEach(key => {
             // console.log(key, data.variation[key]);
             obj = data.variation[key]
+            option = ''
             Object.keys(obj).forEach(k => {
-                html += "<option value=" + k + ":" + obj[k] + ">" + k + " : " + obj[k] + "</option>";
+                option += k + " : " + obj[k] + " ";
 
-                // console.log(k, obj[k]);
+
+                console.log(k, obj[k]);
             });
         });
-        html += "</select></p >";
+        html += "<option value='" +option + "'> " + option + "</option></select></p >";
         document.getElementById("actions-dropdown").innerHTML = html;
 
     }
